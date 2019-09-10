@@ -395,6 +395,25 @@ func (ids *insertDatasetSuite) TestExecutor() {
 	ids.Equal(`INSERT INTO "items" ("address", "name") VALUES (?, ?)`, isql)
 }
 
+func (ids *insertDatasetSuite) TestExecutorWithDefault() {
+	mDb, _, err := sqlmock.New()
+	ids.NoError(err)
+
+	ds := newInsertDataset("mock", exec.NewQueryFactory(mDb)).
+		Into("items").
+		Rows(Record{"address": "111 Test Addr", "name": exp.Default()})
+
+	isql, args, err := ds.Executor().ToSQL()
+	ids.NoError(err)
+	ids.Empty(args)
+	ids.Equal(`INSERT INTO "items" ("address", "name") VALUES ('111 Test Addr', DEFAULT)`, isql)
+
+	isql, args, err = ds.Prepared(true).Executor().ToSQL()
+	ids.NoError(err)
+	ids.Equal([]interface{}{"111 Test Addr", "DEFAULT"}, args)
+	ids.Equal(`INSERT INTO "items" ("address", "name") VALUES (?, ?)`, isql)
+}
+
 func (ids *insertDatasetSuite) TestToSQL() {
 	md := new(mocks.SQLDialect)
 	ds := Insert("test").SetDialect(md)
