@@ -466,6 +466,12 @@ func (esg *expressionSQLGenerator) updateExpressionSQL(b sb.SQLBuilder, update e
 //    L("a = ?", 1) -> a = 1
 func (esg *expressionSQLGenerator) literalExpressionSQL(b sb.SQLBuilder, literal exp.LiteralExpression) {
 	l := literal.Literal()
+
+	if b.IsPrepared() && l == exp.Default().Literal() {
+		esg.placeHolderSQL(b, l)
+		return
+	}
+
 	args := literal.Args()
 	argsLen := len(args)
 	if argsLen > 0 {

@@ -493,7 +493,7 @@ func ExampleDefault() {
 
 	// Output:
 	// INSERT INTO "items" ("address", "name") VALUES (DEFAULT, DEFAULT) []
-	// INSERT INTO "items" ("address", "name") VALUES (DEFAULT, DEFAULT) []
+	// INSERT INTO "items" ("address", "name") VALUES (?, ?) [DEFAULT DEFAULT]
 
 }
 
